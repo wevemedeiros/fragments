@@ -17,6 +17,11 @@ const ratelimitWindow = process.env.RATE_LIMIT_WINDOW
   ? (process.env.RATE_LIMIT_WINDOW as Duration)
   : '1d'
 
+// Função simplificada para contar tokens (esta é uma aproximação)
+function countTokens(text: string): number {
+  return text.split(/\s+/).length;
+}
+
 export async function POST(req: Request) {
   console.log('Received POST request to /api/chat')
 
@@ -57,8 +62,8 @@ export async function POST(req: Request) {
   }
 
   console.log('User ID:', userID)
-  console.log('Template:', template)
-  console.log('Model:', model)
+  console.log('Template:', JSON.stringify(template, null, 2))
+  console.log('Model:', JSON.stringify(model, null, 2))
   console.log('Config:', JSON.stringify(config, null, 2))
 
   const { model: modelNameString, apiKey: modelApiKey, ...modelParams } = config
@@ -73,23 +78,29 @@ export async function POST(req: Request) {
   const defaultMode = getDefaultMode(model)
   console.log('Default mode:', defaultMode)
 
-  console.log('Preparing to stream object with parameters:', JSON.stringify({
-    model: modelClient,
-    schema,
-    system: systemPrompt,
-    messages,
-    mode: defaultMode,
-    ...modelParams
-  }, null, 2))
+  // Contar tokens
+  const systemTokens = countTokens(systemPrompt);
+  const messageTokens = messages.reduce((acc, msg) => acc + countTokens(JSON.stringify(msg)), 0);
+  const totalTokens = systemTokens + messageTokens;
 
-  const stream = await streamObject({
+  console.log('Token count:', {
+    systemTokens,
+    messageTokens,
+    totalTokens
+  })
+
+  const streamParams = {
     model: modelClient as LanguageModel,
     schema,
     system: systemPrompt,
     messages,
     mode: defaultMode,
-    ...modelParams,
-  })
+    ...modelParams
+  };
+
+  console.log('Preparing to stream object with parameters:', JSON.stringify(streamParams, null, 2))
+
+  const stream = await streamObject(streamParams)
 
   console.log('Stream object created')
 

@@ -19,6 +19,7 @@ const ratelimitWindow = process.env.RATE_LIMIT_WINDOW
 
 // Função mais precisa para contar tokens (ainda uma aproximação)
 function countTokens(text: string): number {
+  // Divide o texto em tokens (palavras, pontuação, etc.)
   const tokens = text.toLowerCase().split(/(\s+|[.,!?;:'"()\[\]{}])/g).filter(Boolean);
   return tokens.length;
 }
@@ -39,13 +40,6 @@ export async function POST(req: Request) {
     model: LLMModel
     config: LLMModelConfig
   } = await req.json()
-
-  // Verificar se o template é 'general_assistant' e evitar chamada ao /api/chat
-  if (template.name === 'General Assistant') {
-    return new Response('This template requires using /api/general_chat instead of /api/chat.', {
-      status: 400,
-    });
-  }
 
   console.log('///RECEIVED DATA', JSON.stringify({ messages, userID, template, model, config }, null, 2))
 
@@ -80,6 +74,7 @@ export async function POST(req: Request) {
 
   const modelClient = getModelClient(model, config)
   console.log('///Model client created')
+  
 
   const systemPrompt = toPrompt(template)
   console.log('///SYSTEM PROMPT:', systemPrompt)

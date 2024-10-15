@@ -41,7 +41,7 @@ export async function POST(req: Request) {
     config: LLMModelConfig
   } = await req.json()
 
-  console.log('Received data:', JSON.stringify({ messages, userID, template, model, config }, null, 2))
+  console.log('///RECEIVED DATA', JSON.stringify({ messages, userID, template, model, config }, null, 2))
 
   const limit = !config.apiKey
     ? await ratelimit(
@@ -63,24 +63,24 @@ export async function POST(req: Request) {
     })
   }
 
-  console.log('User ID:', userID)
-  console.log('Template:', JSON.stringify(template, null, 2))
-  console.log('System prompt:', schema)
-  console.log('Model:', JSON.stringify(model, null, 2))
-  console.log('Config:', JSON.stringify(config, null, 2))
+  console.log('///USER ID:', userID)
+  console.log('///TEMPLATE:', JSON.stringify(template, null, 2))
+  console.log('///SCHEMA:', schema)
+  console.log('///MODEL:', JSON.stringify(model, null, 2))
+  console.log('///CONFIG:', JSON.stringify(config, null, 2))
 
   const { model: modelNameString, apiKey: modelApiKey, ...modelParams } = config
-  console.log('Model parameters:', JSON.stringify(modelParams, null, 2))
+  console.log('///MODEL PARAMETERS:', JSON.stringify(modelParams, null, 2))
 
   const modelClient = getModelClient(model, config)
-  console.log('Model client created')
+  console.log('///Model client created')
   
 
   const systemPrompt = toPrompt(template)
-  console.log('System prompt:', systemPrompt)
+  console.log('///SYSTEM PROMPT:', systemPrompt)
 
   const defaultMode = getDefaultMode(model)
-  console.log('Default mode:', defaultMode)
+  console.log('///DEFAULT MODE', defaultMode)
 
   // Contar tokens de forma mais abrangente
   const systemTokens = countTokens(systemPrompt);

@@ -12,6 +12,7 @@ import { Message, toAISDKMessages, toMessageImage } from '@/lib/messages'
 import { LLMModelConfig } from '@/lib/models'
 import modelsList from '@/lib/models.json'
 import { FragmentSchema, fragmentSchema as schema } from '@/lib/schema'
+import { fragmentSchema as fragmentSchemaGeneral } from '@/lib/schema_general'
 import { supabase } from '@/lib/supabase'
 import templates, { TemplateId } from '@/lib/templates'
 import { ExecutionResult } from '@/lib/types'
@@ -62,7 +63,7 @@ export default function Home() {
         : currentModel?.id === 'o1-preview' || currentModel?.id === 'o1-mini'
         ? '/api/chat-o1'
         : '/api/chat',
-    schema,
+    schema: selectedTemplate === 'general_assistant' ? fragmentSchemaGeneral : schema,
     onFinish: async ({ object: fragment, error }) => {
       if (!error) {
         // send it to /api/sandbox
@@ -244,7 +245,7 @@ export default function Home() {
     setFragment(preview.fragment)
     setResult(preview.result)
   }
-
+ {console.log('FRAGMENTO AQUI////////', fragment)}
   function handleUndo() {
     setMessages((previousMessages) => [...previousMessages.slice(0, -2)])
     setCurrentPreview({ fragment: undefined, result: undefined })

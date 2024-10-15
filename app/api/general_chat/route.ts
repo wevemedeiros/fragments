@@ -1,7 +1,7 @@
 import { Duration } from '@/lib/duration'
 import { getModelClient, getDefaultMode } from '@/lib/models'
 import { LLMModel, LLMModelConfig } from '@/lib/models'
-import { toPrompt } from '@/lib/prompt'
+import { toPrompt } from '@/lib/prompt_general'
 import ratelimit from '@/lib/ratelimit'
 import { Templates } from '@/lib/templates'
 import { streamObject, LanguageModel, CoreMessage } from 'ai'
@@ -102,7 +102,7 @@ export async function POST(req: Request) {
     system: systemPrompt,
     messages,
     mode: defaultMode,
-    schema: schemaGeneral, // Usando o schema_general
+    schema: schemaGeneral,
     ...modelParams
   };
 
@@ -114,6 +114,11 @@ export async function POST(req: Request) {
 
   const response = stream.toTextStreamResponse()
   console.log('Text stream response created')
+
+console.log('///GENERATED PROMPT:', systemPrompt);
+console.log('///MESSAGES:', JSON.stringify(messages, null, 2));
+console.log('///STREAM PARAMS:', JSON.stringify(streamParams, null, 2));
+console.log('///RESPONSE:', response);
 
   return response
 }

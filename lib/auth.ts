@@ -56,7 +56,7 @@ export function useAuth(
   useEffect(() => {
     if (!supabase) {
       console.warn('Supabase is not initialized')
-      return setSession({ user: { email: 'demo@e2b.dev' } } as Session)
+      return setSession({ user: { email: 'demo@myunite.ai' } } as Session)
     }
 
     supabase.auth.getSession().then(({ data: { session } }) => {

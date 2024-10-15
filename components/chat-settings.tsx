@@ -29,7 +29,7 @@ export function ChatSettings({
 }) {
   return (
     <DropdownMenu>
-      <TooltipProvider>
+    {/*  <TooltipProvider>
         <Tooltip delayDuration={0}>
           <TooltipTrigger asChild>
             <DropdownMenuTrigger asChild>
@@ -38,9 +38,9 @@ export function ChatSettings({
               </Button>
             </DropdownMenuTrigger>
           </TooltipTrigger>
-          <TooltipContent>LLM settings</TooltipContent>
+          <TooltipContent></TooltipContent>
         </Tooltip>
-      </TooltipProvider>
+      </TooltipProvider>*/}
       <DropdownMenuContent align="start">
         {apiKeyConfigurable && (
           <>

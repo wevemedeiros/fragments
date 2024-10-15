@@ -53,19 +53,16 @@ export function NavBar({
 }) {
   const { setTheme, theme } = useTheme()
   return (
-    <nav className="w-full flex bg-background py-4">
-      <div className="flex flex-1 items-center">
-        <Link href="/" className="flex items-center gap-2" target="_blank">
-          <Logo width={24} height={24} />
-          <h1 className="whitespace-pre">Fragments by </h1>
-        </Link>
-        <Link
-          href="https://e2b.dev"
-          className="underline decoration-[rgba(229,123,0,.3)] decoration-2 text-[#ff8800]"
-          target="_blank"
-        >
-          E2B
-        </Link>
+  <nav className="w-full flex bg-background py-4">
+    <div className="flex flex-1 items-center">
+      <Link href="/" className="flex items-center gap-2" target="_blank">
+        <img
+          src="https://cdn.prod.website-files.com/668db42acfc7c947383a98ca/66bdebde5faba14f61d4c119_Logo%20Unite%20Fundo%20Transparente.png"
+          alt="Unite Logo"
+          width={100}
+          height={100}
+        />
+      </Link>
       </div>
       <div className="flex items-center gap-1 md:gap-4">
         <TooltipProvider>
@@ -146,29 +143,13 @@ export function NavBar({
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={() => {
-                  window.open('https://e2b.dev', '_blank')
+                  window.open('https://www.myunite.ai', '_blank')
                 }}
               >
                 <Logo className="mr-2 h-4 w-4 text-muted-foreground" />
-                About E2B
+                About Unite
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onSocialClick('github')}>
-                <GitHubLogoIcon className="mr-2 h-4 w-4 text-muted-foreground" />
-                Star us on GitHub
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onSocialClick('discord')}>
-                <DiscordLogoIcon className="mr-2 h-4 w-4 text-muted-foreground" />
-                Join us on Discord
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onSocialClick('x')}>
-                <TwitterLogoIcon className="mr-2 h-4 w-4 text-muted-foreground" />
-                Follow us on X
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={signOut}>
-                <LogOut className="mr-2 h-4 w-4 text-muted-foreground" />
-                Sign out
-              </DropdownMenuItem>
+              
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (

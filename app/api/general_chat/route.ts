@@ -5,6 +5,7 @@ import { toPrompt } from '@/lib/prompt'
 import ratelimit from '@/lib/ratelimit'
 import { Templates } from '@/lib/templates'
 import { streamObject, LanguageModel, CoreMessage } from 'ai'
+import { z } from 'zod'
 
 export const maxDuration = 60
 
@@ -16,7 +17,6 @@ const ratelimitWindow = process.env.RATE_LIMIT_WINDOW
   ? (process.env.RATE_LIMIT_WINDOW as Duration)
   : '1d'
 
-// Função mais precisa para contar tokens (ainda uma aproximação)
 function countTokens(text: string): number {
   const tokens = text.toLowerCase().split(/(\s+|[.,!?;:'"()\[\]{}])/g).filter(Boolean);
   return tokens.length;
@@ -78,7 +78,6 @@ export async function POST(req: Request) {
   const defaultMode = getDefaultMode(model)
   console.log('///DEFAULT MODE', defaultMode)
 
-  // Contar tokens de forma mais abrangente
   const systemTokens = countTokens(systemPrompt);
   const messageTokens = messages.reduce((acc, msg) => acc + countTokens(JSON.stringify(msg.content)), 0);
   const templateTokens = countTokens(JSON.stringify(template));
@@ -103,6 +102,10 @@ export async function POST(req: Request) {
     system: systemPrompt,
     messages,
     mode: defaultMode,
+    schema: z.object({
+      input: z.string().default("Texto aleatório para assistente geral de AI."),
+      output: z.string(),
+    }),
     ...modelParams
   };
 

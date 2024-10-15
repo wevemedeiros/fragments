@@ -57,7 +57,9 @@ export default function Home() {
 
   const { object, submit, isLoading, stop, error } = useObject({
     api:
-      currentModel?.id === 'o1-preview' || currentModel?.id === 'o1-mini'
+      selectedTemplate === 'general_assistant'
+        ? '/api/general_chat'  // Redireciona para /api/general_chat se o template for general_assistant
+        : currentModel?.id === 'o1-preview' || currentModel?.id === 'o1-mini'
         ? '/api/chat-o1'
         : '/api/chat',
     schema,
@@ -69,7 +71,7 @@ export default function Home() {
         posthog.capture('fragment_generated', {
           template: fragment?.template,
         })
-
+  
         const response = await fetch('/api/sandbox', {
           method: 'POST',
           body: JSON.stringify({
@@ -78,11 +80,11 @@ export default function Home() {
             apiKey,
           }),
         })
-
+  
         const result = await response.json()
         console.log('result', result)
         posthog.capture('sandbox_created', { url: result.url })
-
+  
         if (response.status === 429) {
           setIsRateLimited(true)
         }

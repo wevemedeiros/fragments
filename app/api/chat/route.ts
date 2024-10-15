@@ -65,6 +65,7 @@ export async function POST(req: Request) {
 
   console.log('User ID:', userID)
   console.log('Template:', JSON.stringify(template, null, 2))
+  console.log('System prompt:', schema)
   console.log('Model:', JSON.stringify(model, null, 2))
   console.log('Config:', JSON.stringify(config, null, 2))
 
@@ -73,6 +74,7 @@ export async function POST(req: Request) {
 
   const modelClient = getModelClient(model, config)
   console.log('Model client created')
+  
 
   const systemPrompt = toPrompt(template)
   console.log('System prompt:', systemPrompt)
@@ -84,14 +86,16 @@ export async function POST(req: Request) {
   const systemTokens = countTokens(systemPrompt);
   const messageTokens = messages.reduce((acc, msg) => acc + countTokens(JSON.stringify(msg.content)), 0);
   const templateTokens = countTokens(JSON.stringify(template));
+  const schemaTokens = countTokens(schema);
   const modelTokens = countTokens(JSON.stringify(model));
   const configTokens = countTokens(JSON.stringify(config));
   const modeTokens = countTokens(defaultMode);
 
-  const totalTokens = systemTokens + messageTokens + templateTokens + modelTokens + configTokens + modeTokens;
+  const totalTokens = systemTokens + schemaTokens + messageTokens + templateTokens + modelTokens + configTokens + modeTokens;
 
   console.log('Token count:', {
     systemTokens,
+    schemaTokens,
     messageTokens,
     templateTokens,
     modelTokens,

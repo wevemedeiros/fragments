@@ -86,7 +86,7 @@ export async function POST(req: Request) {
   const systemTokens = countTokens(systemPrompt);
   const messageTokens = messages.reduce((acc, msg) => acc + countTokens(JSON.stringify(msg.content)), 0);
   const templateTokens = countTokens(JSON.stringify(template));
-  const schemaTokens = countTokens(schema);
+  const schemaTokens = countTokens(JSON.stringify(schema));
   const modelTokens = countTokens(JSON.stringify(model));
   const configTokens = countTokens(JSON.stringify(config));
   const modeTokens = countTokens(defaultMode);

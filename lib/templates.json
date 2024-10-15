@@ -1,4 +1,13 @@
 {
+
+  "general_assistant": {
+    "name": "General Assistant",
+    "lib": [""],
+    "file": "",
+    "instructions": "Helps the user in the user's language",
+    "port": null
+  },
+
   "code-interpreter-multilang": {
     "name": "Python data analyst",
     "lib": ["python", "jupyter", "numpy", "pandas", "matplotlib", "seaborn", "plotly"],

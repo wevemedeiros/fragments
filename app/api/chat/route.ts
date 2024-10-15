@@ -12,11 +12,14 @@ export const maxDuration = 60
 const rateLimitMaxRequests = process.env.RATE_LIMIT_MAX_REQUESTS
   ? parseInt(process.env.RATE_LIMIT_MAX_REQUESTS)
   : 10
+
 const ratelimitWindow = process.env.RATE_LIMIT_WINDOW
   ? (process.env.RATE_LIMIT_WINDOW as Duration)
   : '1d'
 
 export async function POST(req: Request) {
+  console.log('Received POST request to /api/chat')
+
   const {
     messages,
     userID,
@@ -31,6 +34,8 @@ export async function POST(req: Request) {
     config: LLMModelConfig
   } = await req.json()
 
+  console.log('Received data:', JSON.stringify({ messages, userID, template, model, config }, null, 2))
+
   const limit = !config.apiKey
     ? await ratelimit(
         userID,
@@ -40,6 +45,7 @@ export async function POST(req: Request) {
     : false
 
   if (limit) {
+    console.log(`Rate limit reached for user: ${userID}`)
     return new Response('You have reached your request limit for the day.', {
       status: 429,
       headers: {
@@ -50,22 +56,45 @@ export async function POST(req: Request) {
     })
   }
 
-  console.log('userID', userID)
-  // console.log('template', template)
-  console.log('model', model)
-  // console.log('config', config)
+  console.log('User ID:', userID)
+  console.log('Template:', template)
+  console.log('Model:', model)
+  console.log('Config:', JSON.stringify(config, null, 2))
 
   const { model: modelNameString, apiKey: modelApiKey, ...modelParams } = config
+  console.log('Model parameters:', JSON.stringify(modelParams, null, 2))
+
   const modelClient = getModelClient(model, config)
+  console.log('Model client created')
+
+  const systemPrompt = toPrompt(template)
+  console.log('System prompt:', systemPrompt)
+
+  const defaultMode = getDefaultMode(model)
+  console.log('Default mode:', defaultMode)
+
+  console.log('Preparing to stream object with parameters:', JSON.stringify({
+    model: modelClient,
+    schema,
+    system: systemPrompt,
+    messages,
+    mode: defaultMode,
+    ...modelParams
+  }, null, 2))
 
   const stream = await streamObject({
     model: modelClient as LanguageModel,
     schema,
-    system: toPrompt(template),
+    system: systemPrompt,
     messages,
-    mode: getDefaultMode(model),
+    mode: defaultMode,
     ...modelParams,
   })
 
-  return stream.toTextStreamResponse()
+  console.log('Stream object created')
+
+  const response = stream.toTextStreamResponse()
+  console.log('Text stream response created')
+
+  return response
 }

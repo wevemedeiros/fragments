@@ -5,7 +5,7 @@ import { toPrompt } from '@/lib/prompt'
 import ratelimit from '@/lib/ratelimit'
 import { Templates } from '@/lib/templates'
 import { streamObject, LanguageModel, CoreMessage } from 'ai'
-import { z } from 'zod'
+import { fragmentSchema as schemaGeneral } from '@/lib/schema_general' // Importando o schema_general
 
 export const maxDuration = 60
 
@@ -102,10 +102,7 @@ export async function POST(req: Request) {
     system: systemPrompt,
     messages,
     mode: defaultMode,
-    schema: z.object({
-      input: z.string().default("Texto aleatório para assistente geral de AI."),
-      output: z.string(),
-    }),
+    schema: schemaGeneral, // Usando o schema_general
     ...modelParams
   };
 

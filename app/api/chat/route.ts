@@ -17,9 +17,11 @@ const ratelimitWindow = process.env.RATE_LIMIT_WINDOW
   ? (process.env.RATE_LIMIT_WINDOW as Duration)
   : '1d'
 
-// Função simplificada para contar tokens (esta é uma aproximação)
+// Função mais precisa para contar tokens (ainda uma aproximação)
 function countTokens(text: string): number {
-  return text.split(/\s+/).length;
+  // Divide o texto em tokens (palavras, pontuação, etc.)
+  const tokens = text.toLowerCase().split(/(\s+|[.,!?;:'"()\[\]{}])/g).filter(Boolean);
+  return tokens.length;
 }
 
 export async function POST(req: Request) {
@@ -78,14 +80,23 @@ export async function POST(req: Request) {
   const defaultMode = getDefaultMode(model)
   console.log('Default mode:', defaultMode)
 
-  // Contar tokens
+  // Contar tokens de forma mais abrangente
   const systemTokens = countTokens(systemPrompt);
-  const messageTokens = messages.reduce((acc, msg) => acc + countTokens(JSON.stringify(msg)), 0);
-  const totalTokens = systemTokens + messageTokens;
+  const messageTokens = messages.reduce((acc, msg) => acc + countTokens(JSON.stringify(msg.content)), 0);
+  const templateTokens = countTokens(JSON.stringify(template));
+  const modelTokens = countTokens(JSON.stringify(model));
+  const configTokens = countTokens(JSON.stringify(config));
+  const modeTokens = countTokens(defaultMode);
+
+  const totalTokens = systemTokens + messageTokens + templateTokens + modelTokens + configTokens + modeTokens;
 
   console.log('Token count:', {
     systemTokens,
     messageTokens,
+    templateTokens,
+    modelTokens,
+    configTokens,
+    modeTokens,
     totalTokens
   })
 

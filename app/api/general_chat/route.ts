@@ -12,6 +12,7 @@ const rateLimitMaxRequests = process.env.RATE_LIMIT_MAX_REQUESTS
   ? parseInt(process.env.RATE_LIMIT_MAX_REQUESTS)
   : 10
 
+  
 const ratelimitWindow = process.env.RATE_LIMIT_WINDOW
   ? (process.env.RATE_LIMIT_WINDOW as Duration)
   : '1d'
@@ -38,13 +39,6 @@ export async function POST(req: Request) {
     model: LLMModel
     config: LLMModelConfig
   } = await req.json()
-
-  // Verificar se o template selecionado é 'general_assistant'
-  if (template.name !== 'General Assistant') {
-    return new Response('Invalid template for /api/general_chat. Please select the "General Assistant" template.', {
-      status: 400,
-    });
-  }
 
   console.log('///RECEIVED DATA', JSON.stringify({ messages, userID, template, model, config }, null, 2))
 
